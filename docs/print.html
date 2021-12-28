@@ -205,49 +205,6 @@ async fn bob(mut chan: Channel) -&gt; Result&lt;()&gt; {
 </span></code></pre></pre>
 <p>It is important to note that you can send objects that
 implement <code>Serialize</code> and receive objects that implement <code>Deserialize</code>.</p>
-<p>Channels also have an address that represents the peer.
-Let's say for example that Alice's machine is connected to
-Bob's machine and Carl's machine, but Bob's machine and Carl's machine
-are not connected. Alice's service mirrors messages between Bob and Carl.</p>
-<pre><code># Bob sends a message to alice
-Bob -&gt; Alice -&gt; Carl # Carl receives message
-
-
-# Carl sends a message to alice
-Carl -&gt; Alice -&gt; Bob # Bob receives message
-</code></pre>
-<p>This works nicely until Carl's service becomes viral, and Alice's machine
-cannot keep up with Carl's messages. Carl's machine and Bob's machine should
-be connected directly and Alice's machine should not be needed anymore.
-A simple way of doing this in the architecture of channels is through addresses.</p>
-<p>A simple example of addresses(only for explanation purposes, doesn't work):</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
-</span>
-<span class="boring">fn main() {
-</span>use sia::{Channel, Result};
-
-async fn alice(mut bob: Channel, carl: Channel) -&gt; Result&lt;()&gt; {
-    bob.send(carl.addr()?).await?;
-    Ok(())
-}
-
-async fn bob(mut alice: Channel) -&gt; Result&lt;()&gt; {
-    // the connect method does not exist,
-    // in reality, this method takes in the id of a service
-    let mut carl = bob.receive().await?.connect();
-    carl.send(&quot;Hey Carl!&quot;).await?;
-    Ok(())
-}
-
-async fn carl(mut bob: Channel) -&gt; Result&lt;()&gt; {
-    let message: String = bob.receive().await?;
-    println!(&quot;bob says: `{}`&quot;, message); // bob says: `Hey Carl!`
-    Ok(())
-}
-
-<span class="boring">}
-</span></code></pre></pre>
 <p>Channels by default use Bincode for serialization, but they support various other
 formats such as JSON, BSON and Postcard.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="services"><a class="header" href="#services">Services</a></h1>
@@ -289,6 +246,143 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 </span></code></pre></pre>
 <p>These services can be registered on a route and exposed through a provider,
 and they are designed to be embarrasingly parallel.</p>
+<p>It's also important to know how these services get expanded, since the service macro does not cover all
+use cases of services, for example, the macros in <code>SRPC</code> don't expand to service macros for generic support.</p>
+<p>A simple service</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[service]
+async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
+    peer.send(counter).await?;
+    Ok(())
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>expands to this</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[allow(non_camel_case_types)]
+struct get_id;
+impl ::sia::service::Service for get_id {
+    const ENDPOINT: &amp;'static str = &quot;get_id&quot;;
+    type Pipeline = ();
+    type Meta = Arc&lt;u64&gt;;
+    fn service(
+        __sia_inner_meta: Arc&lt;u64&gt;,
+    ) -&gt; Box&lt;dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+        async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
+            peer.send(counter).await?;
+            Ok(())
+        }
+        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>and a simple SRPC implementation</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[srpc::rpc]
+struct Counter {
+    counter: u64
+}
+
+#[srpc::rpc]
+impl Counter {
+    async fn increase(&amp;mut self) -&gt; u64 {
+        self.counter += 1;
+        self.counter
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>expands to this</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>struct Counter {
+    counter: u64,
+}
+impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+    const ENDPOINT: &amp;'static str = &quot;counter&quot;;
+}
+struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData&lt;()&gt;);
+impl From&lt;::srpc::sia::Channel&gt; for CounterPeer {
+    fn from(c: ::srpc::sia::Channel) -&gt; Self {
+        CounterPeer(c, ::core::marker::PhantomData::default())
+    }
+}
+impl ::srpc::Peer for Counter {
+    type Struct = CounterPeer;
+}
+const _: () = {
+    impl Counter {
+        async fn increase(&amp;mut self) -&gt; u64 {
+            self.counter += 1;
+            self.counter
+        }
+    }
+    #[allow(non_camel_case_types)]
+    #[derive(Serialize_repr, Deserialize_repr)]
+    #[repr(u8)]
+    enum __srpc_action {
+        increase,
+    }
+    impl ::srpc::sia::service::Service for Counter {
+        const ENDPOINT: &amp;'static str = &quot;counter&quot;;
+        type Pipeline = ();
+        type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
+        fn service(
+            __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+        ) -&gt; Box&lt;dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+            ::sia::service::run_metadata(
+                __srpc_inner_meta,
+                |__srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                    loop {
+                        match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
+                            __srpc_action::increase =&gt; {
+                                let res = __srpc_inner_meta.write().await.increase().await;
+                                __srpc_inner_channel.send(res).await?;
+                            }
+                        }
+                    }
+                },
+            )
+        }
+    }
+    impl ::srpc::sia::service::StaticService for Counter {
+        type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
+        type Chan = ::srpc::sia::Channel;
+        fn introduce(
+            __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+            mut __srpc_inner_channel: ::srpc::sia::Channel,
+        ) -&gt; ::srpc::sia::runtime::JoinHandle&lt;::srpc::sia::Result&lt;()&gt;&gt; {
+            ::srpc::sia::runtime::spawn(async move {
+                loop {
+                    match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
+                        __srpc_action::increase =&gt; {
+                            let res = __srpc_inner_meta.write().await.increase().await;
+                            __srpc_inner_channel.send(res).await?;
+                        }
+                    }
+                }
+            })
+        }
+    }
+    impl CounterPeer {
+        pub async fn increase(&amp;mut self) -&gt; ::srpc::sia::Result&lt;u64&gt; {
+            self.0.send(__srpc_action::increase).await?;
+            self.0.receive().await
+        }
+    }
+};
+<span class="boring">}
+</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="routes"><a class="header" href="#routes">Routes</a></h1>
 <p>Routes are concurrent hashmaps that can store services and routes.
 By default, Sia uses a global route, but a local ones can be created and worked with too.</p>
@@ -460,13 +554,11 @@ and are comfortable with it, as some of these projects can be demanding.</p>
 <p>If you still don't understand how things work, don't be afraid to take a look
 at the code, since the codebase is relatively small; Sia is implemented in ~600 sloc,
 and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
+<p>You can also take a look at the code from SailDB, a key-value in-memory database designed to be
+extremely simple and performant, but it uses SRPC as a backend for writing services.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
-<p>The final challenge is to build a distributed file-system.</p>
-<p>The binary should watch over a folder and keep the folder synced with other peers.</p>
+<p>The final challenge is to build a distributed consensus algorithm.</p>
 <p>Attempts at this challenge should be added to this list as an example:</p>
-<ul>
-<li><a href="examples/">znx3p0</a></li>
-</ul>
 
                     </main>
 
@@ -485,6 +577,20 @@ and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

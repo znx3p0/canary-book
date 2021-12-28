@@ -38,3 +38,134 @@ async fn counter_service(counter: Arc<AtomicU64>, mut peer: Channel) -> Result<(
 These services can be registered on a route and exposed through a provider,
 and they are designed to be embarrasingly parallel.
 
+It's also important to know how these services get expanded, since the service macro does not cover all
+use cases of services, for example, the macros in `SRPC` don't expand to service macros for generic support.
+
+A simple service
+```rust , no_run
+#[service]
+async fn get_id(counter: Arc<u64>, mut peer: Channel) -> Result<()> {
+    peer.send(counter).await?;
+    Ok(())
+}
+```
+
+expands to this
+```rust , no_run
+#[allow(non_camel_case_types)]
+struct get_id;
+impl ::sia::service::Service for get_id {
+    const ENDPOINT: &'static str = "get_id";
+    type Pipeline = ();
+    type Meta = Arc<u64>;
+    fn service(
+        __sia_inner_meta: Arc<u64>,
+    ) -> Box<dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static> {
+        async fn get_id(counter: Arc<u64>, mut peer: Channel) -> Result<()> {
+            peer.send(counter).await?;
+            Ok(())
+        }
+        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+    }
+}
+```
+
+and a simple SRPC implementation
+```rust , no_run
+#[srpc::rpc]
+struct Counter {
+    counter: u64
+}
+
+#[srpc::rpc]
+impl Counter {
+    async fn increase(&mut self) -> u64 {
+        self.counter += 1;
+        self.counter
+    }
+}
+```
+
+expands to this
+
+```rust
+
+struct Counter {
+    counter: u64,
+}
+impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+    const ENDPOINT: &'static str = "counter";
+}
+struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData<()>);
+impl From<::srpc::sia::Channel> for CounterPeer {
+    fn from(c: ::srpc::sia::Channel) -> Self {
+        CounterPeer(c, ::core::marker::PhantomData::default())
+    }
+}
+impl ::srpc::Peer for Counter {
+    type Struct = CounterPeer;
+}
+const _: () = {
+    impl Counter {
+        async fn increase(&mut self) -> u64 {
+            self.counter += 1;
+            self.counter
+        }
+    }
+    #[allow(non_camel_case_types)]
+    #[derive(Serialize_repr, Deserialize_repr)]
+    #[repr(u8)]
+    enum __srpc_action {
+        increase,
+    }
+    impl ::srpc::sia::service::Service for Counter {
+        const ENDPOINT: &'static str = "counter";
+        type Pipeline = ();
+        type Meta = ::std::sync::Arc<::srpc::RwLock<Counter>>;
+        fn service(
+            __srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
+        ) -> Box<dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static> {
+            ::sia::service::run_metadata(
+                __srpc_inner_meta,
+                |__srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
+                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                    loop {
+                        match __srpc_inner_channel.receive::<__srpc_action>().await? {
+                            __srpc_action::increase => {
+                                let res = __srpc_inner_meta.write().await.increase().await;
+                                __srpc_inner_channel.send(res).await?;
+                            }
+                        }
+                    }
+                },
+            )
+        }
+    }
+    impl ::srpc::sia::service::StaticService for Counter {
+        type Meta = ::std::sync::Arc<::srpc::RwLock<Counter>>;
+        type Chan = ::srpc::sia::Channel;
+        fn introduce(
+            __srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
+            mut __srpc_inner_channel: ::srpc::sia::Channel,
+        ) -> ::srpc::sia::runtime::JoinHandle<::srpc::sia::Result<()>> {
+            ::srpc::sia::runtime::spawn(async move {
+                loop {
+                    match __srpc_inner_channel.receive::<__srpc_action>().await? {
+                        __srpc_action::increase => {
+                            let res = __srpc_inner_meta.write().await.increase().await;
+                            __srpc_inner_channel.send(res).await?;
+                        }
+                    }
+                }
+            })
+        }
+    }
+    impl CounterPeer {
+        pub async fn increase(&mut self) -> ::srpc::sia::Result<u64> {
+            self.0.send(__srpc_action::increase).await?;
+            self.0.receive().await
+        }
+    }
+};
+```
+

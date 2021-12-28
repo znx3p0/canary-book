@@ -181,6 +181,143 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 </span></code></pre></pre>
 <p>These services can be registered on a route and exposed through a provider,
 and they are designed to be embarrasingly parallel.</p>
+<p>It's also important to know how these services get expanded, since the service macro does not cover all
+use cases of services, for example, the macros in <code>SRPC</code> don't expand to service macros for generic support.</p>
+<p>A simple service</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[service]
+async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
+    peer.send(counter).await?;
+    Ok(())
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>expands to this</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[allow(non_camel_case_types)]
+struct get_id;
+impl ::sia::service::Service for get_id {
+    const ENDPOINT: &amp;'static str = &quot;get_id&quot;;
+    type Pipeline = ();
+    type Meta = Arc&lt;u64&gt;;
+    fn service(
+        __sia_inner_meta: Arc&lt;u64&gt;,
+    ) -&gt; Box&lt;dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+        async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
+            peer.send(counter).await?;
+            Ok(())
+        }
+        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>and a simple SRPC implementation</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[srpc::rpc]
+struct Counter {
+    counter: u64
+}
+
+#[srpc::rpc]
+impl Counter {
+    async fn increase(&amp;mut self) -&gt; u64 {
+        self.counter += 1;
+        self.counter
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>expands to this</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>struct Counter {
+    counter: u64,
+}
+impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+    const ENDPOINT: &amp;'static str = &quot;counter&quot;;
+}
+struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData&lt;()&gt;);
+impl From&lt;::srpc::sia::Channel&gt; for CounterPeer {
+    fn from(c: ::srpc::sia::Channel) -&gt; Self {
+        CounterPeer(c, ::core::marker::PhantomData::default())
+    }
+}
+impl ::srpc::Peer for Counter {
+    type Struct = CounterPeer;
+}
+const _: () = {
+    impl Counter {
+        async fn increase(&amp;mut self) -&gt; u64 {
+            self.counter += 1;
+            self.counter
+        }
+    }
+    #[allow(non_camel_case_types)]
+    #[derive(Serialize_repr, Deserialize_repr)]
+    #[repr(u8)]
+    enum __srpc_action {
+        increase,
+    }
+    impl ::srpc::sia::service::Service for Counter {
+        const ENDPOINT: &amp;'static str = &quot;counter&quot;;
+        type Pipeline = ();
+        type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
+        fn service(
+            __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+        ) -&gt; Box&lt;dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+            ::sia::service::run_metadata(
+                __srpc_inner_meta,
+                |__srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                    loop {
+                        match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
+                            __srpc_action::increase =&gt; {
+                                let res = __srpc_inner_meta.write().await.increase().await;
+                                __srpc_inner_channel.send(res).await?;
+                            }
+                        }
+                    }
+                },
+            )
+        }
+    }
+    impl ::srpc::sia::service::StaticService for Counter {
+        type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
+        type Chan = ::srpc::sia::Channel;
+        fn introduce(
+            __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
+            mut __srpc_inner_channel: ::srpc::sia::Channel,
+        ) -&gt; ::srpc::sia::runtime::JoinHandle&lt;::srpc::sia::Result&lt;()&gt;&gt; {
+            ::srpc::sia::runtime::spawn(async move {
+                loop {
+                    match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
+                        __srpc_action::increase =&gt; {
+                            let res = __srpc_inner_meta.write().await.increase().await;
+                            __srpc_inner_channel.send(res).await?;
+                        }
+                    }
+                }
+            })
+        }
+    }
+    impl CounterPeer {
+        pub async fn increase(&amp;mut self) -&gt; ::srpc::sia::Result&lt;u64&gt; {
+            self.0.send(__srpc_action::increase).await?;
+            self.0.receive().await
+        }
+    }
+};
+<span class="boring">}
+</span></code></pre></pre>
 
                     </main>
 
@@ -211,6 +348,20 @@ and they are designed to be embarrasingly parallel.</p>
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

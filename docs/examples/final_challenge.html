@@ -143,12 +143,8 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
-<p>The final challenge is to build a distributed file-system.</p>
-<p>The binary should watch over a folder and keep the folder synced with other peers.</p>
+<p>The final challenge is to build a distributed consensus algorithm.</p>
 <p>Attempts at this challenge should be added to this list as an example:</p>
-<ul>
-<li><a href="">znx3p0</a></li>
-</ul>
 
                     </main>
 
@@ -173,6 +169,20 @@
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

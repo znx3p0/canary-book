@@ -168,49 +168,6 @@ async fn bob(mut chan: Channel) -&gt; Result&lt;()&gt; {
 </span></code></pre></pre>
 <p>It is important to note that you can send objects that
 implement <code>Serialize</code> and receive objects that implement <code>Deserialize</code>.</p>
-<p>Channels also have an address that represents the peer.
-Let's say for example that Alice's machine is connected to
-Bob's machine and Carl's machine, but Bob's machine and Carl's machine
-are not connected. Alice's service mirrors messages between Bob and Carl.</p>
-<pre><code># Bob sends a message to alice
-Bob -&gt; Alice -&gt; Carl # Carl receives message
-
-
-# Carl sends a message to alice
-Carl -&gt; Alice -&gt; Bob # Bob receives message
-</code></pre>
-<p>This works nicely until Carl's service becomes viral, and Alice's machine
-cannot keep up with Carl's messages. Carl's machine and Bob's machine should
-be connected directly and Alice's machine should not be needed anymore.
-A simple way of doing this in the architecture of channels is through addresses.</p>
-<p>A simple example of addresses(only for explanation purposes, doesn't work):</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
-</span>
-<span class="boring">fn main() {
-</span>use sia::{Channel, Result};
-
-async fn alice(mut bob: Channel, carl: Channel) -&gt; Result&lt;()&gt; {
-    bob.send(carl.addr()?).await?;
-    Ok(())
-}
-
-async fn bob(mut alice: Channel) -&gt; Result&lt;()&gt; {
-    // the connect method does not exist,
-    // in reality, this method takes in the id of a service
-    let mut carl = bob.receive().await?.connect();
-    carl.send(&quot;Hey Carl!&quot;).await?;
-    Ok(())
-}
-
-async fn carl(mut bob: Channel) -&gt; Result&lt;()&gt; {
-    let message: String = bob.receive().await?;
-    println!(&quot;bob says: `{}`&quot;, message); // bob says: `Hey Carl!`
-    Ok(())
-}
-
-<span class="boring">}
-</span></code></pre></pre>
 <p>Channels by default use Bincode for serialization, but they support various other
 formats such as JSON, BSON and Postcard.</p>
 
@@ -243,6 +200,20 @@ formats such as JSON, BSON and Postcard.</p>
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 
