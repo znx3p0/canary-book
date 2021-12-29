@@ -7,7 +7,7 @@ you to send and receive objects or messages.
 For example, let's assume you have connected Alice's machine and Bob's machine.
 
 ```rust , no_run
-use sia::{Channel, Result};
+use canary::{Channel, Result};
 
 // runs on Alice's machine
 async fn alice(mut chan: Channel) -> Result<()> {

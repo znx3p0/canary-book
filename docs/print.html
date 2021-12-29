@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Sia</title>
+        <title>Canary</title>
         <meta name="robots" content="noindex" />
 
 
@@ -111,7 +111,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -144,21 +144,21 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Sia is a simple distributed systems communication framework.
+<p>Canary is a simple distributed systems communication framework.
 It provides a simple interface for you to code without having
 to worry about the communication backend and more.</p>
-<p>Sia's core principles are a high-level of abstraction and minimalism,
-while keeping configurability and flexibility. Sia also strives
+<p>Canary's core principles are a high-level of abstraction and minimalism,
+while keeping configurability and flexibility. Canary also strives
 to be a zero-cost abstraction, offering as much performance as possible.</p>
-<p>Sia is not opinionated on project structure and only provides tools and more
+<p>Canary is not opinionated on project structure and only provides tools and more
 to make it easier to create distributed systems.</p>
-<p>Unlike most distributed systems libraries, Sia has object stream-based communication
-instead of rpc-based communication. This means that Sia is usually more performant than
+<p>Unlike most distributed systems libraries, Canary has object stream-based communication
+instead of rpc-based communication. This means that Canary is usually more performant than
 other similar solutions such as gRPC and is comparable to websockets, but is more ergonomic
 and usually performs better than websockets.</p>
 <p>Still, this library may be a little too low-level for <em>some</em> use cases.</p>
-<p>Should your project use Sia?
-Sia fits these use cases perfectly.</p>
+<p>Should your project use Canary?
+Canary fits these use cases perfectly.</p>
 <ul>
 <li>You want to build an RPC system</li>
 <li>You want to build a consensus algorithm</li>
@@ -167,10 +167,10 @@ Sia fits these use cases perfectly.</p>
 <li>Anything that's got to do with distributed systems or communications</li>
 </ul>
 <p><strong>DISCLAIMER</strong></p>
-<p>Sia is not yet on 1.0, which means that the API is prone to changes. Nevertheless,
+<p>Canary is not yet on 1.0, which means that the API is prone to changes. Nevertheless,
 the concepts should be stable <strong>BUT</strong> they are still prone to changes.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="concepts"><a class="header" href="#concepts">Concepts</a></h1>
-<p>Sia has few core concepts that need to be fully understood before anything.</p>
+<p>Canary has few core concepts that need to be fully understood before anything.</p>
 <p>The concepts are the following:</p>
 <ul>
 <li>Channels</li>
@@ -187,7 +187,7 @@ you to send and receive objects or messages.</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{Channel, Result};
+</span>use canary::{Channel, Result};
 
 // runs on Alice's machine
 async fn alice(mut chan: Channel) -&gt; Result&lt;()&gt; {
@@ -215,7 +215,7 @@ They also return a result, but failures are silently logged.</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{service, Channel, Result};
+</span>use canary::{service, Channel, Result};
 
 #[service]
 async fn my_service(channel: Channel) -&gt; Result&lt;()&gt; {
@@ -231,7 +231,7 @@ A service like that could be implemented like this:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{service, Channel, Result};
+</span>use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -265,18 +265,18 @@ async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&g
 </span><span class="boring">fn main() {
 </span>#[allow(non_camel_case_types)]
 struct get_id;
-impl ::sia::service::Service for get_id {
+impl ::canary::service::Service for get_id {
     const ENDPOINT: &amp;'static str = &quot;get_id&quot;;
     type Pipeline = ();
     type Meta = Arc&lt;u64&gt;;
     fn service(
-        __sia_inner_meta: Arc&lt;u64&gt;,
-    ) -&gt; Box&lt;dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+        __canary_inner_meta: Arc&lt;u64&gt;,
+    ) -&gt; Box&lt;dyn Fn(::canary::igcp::BareChannel) + Send + Sync + 'static&gt; {
         async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
             peer.send(counter).await?;
             Ok(())
         }
-        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+        ::canary::service::run_metadata(__canary_inner_meta, get_id)
     }
 }
 <span class="boring">}
@@ -307,12 +307,12 @@ impl Counter {
 </span>struct Counter {
     counter: u64,
 }
-impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+impl ::srpc::canary::routes::RegisterEndpoint for Counter {
     const ENDPOINT: &amp;'static str = &quot;counter&quot;;
 }
-struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData&lt;()&gt;);
-impl From&lt;::srpc::sia::Channel&gt; for CounterPeer {
-    fn from(c: ::srpc::sia::Channel) -&gt; Self {
+struct CounterPeer(pub ::srpc::canary::Channel, ::core::marker::PhantomData&lt;()&gt;);
+impl From&lt;::srpc::canary::Channel&gt; for CounterPeer {
+    fn from(c: ::srpc::canary::Channel) -&gt; Self {
         CounterPeer(c, ::core::marker::PhantomData::default())
     }
 }
@@ -332,17 +332,17 @@ const _: () = {
     enum __srpc_action {
         increase,
     }
-    impl ::srpc::sia::service::Service for Counter {
+    impl ::srpc::canary::service::Service for Counter {
         const ENDPOINT: &amp;'static str = &quot;counter&quot;;
         type Pipeline = ();
         type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
         fn service(
             __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-        ) -&gt; Box&lt;dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
-            ::sia::service::run_metadata(
+        ) -&gt; Box&lt;dyn Fn(::srpc::canary::igcp::BareChannel) + Send + Sync + 'static&gt; {
+            ::canary::service::run_metadata(
                 __srpc_inner_meta,
                 |__srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                 mut __srpc_inner_channel: ::srpc::canary::Channel| async move {
                     loop {
                         match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
                             __srpc_action::increase =&gt; {
@@ -355,14 +355,14 @@ const _: () = {
             )
         }
     }
-    impl ::srpc::sia::service::StaticService for Counter {
+    impl ::srpc::canary::service::StaticService for Counter {
         type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
-        type Chan = ::srpc::sia::Channel;
+        type Chan = ::srpc::canary::Channel;
         fn introduce(
             __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-            mut __srpc_inner_channel: ::srpc::sia::Channel,
-        ) -&gt; ::srpc::sia::runtime::JoinHandle&lt;::srpc::sia::Result&lt;()&gt;&gt; {
-            ::srpc::sia::runtime::spawn(async move {
+            mut __srpc_inner_channel: ::srpc::canary::Channel,
+        ) -&gt; ::srpc::canary::runtime::JoinHandle&lt;::srpc::canary::Result&lt;()&gt;&gt; {
+            ::srpc::canary::runtime::spawn(async move {
                 loop {
                     match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
                         __srpc_action::increase =&gt; {
@@ -375,7 +375,7 @@ const _: () = {
         }
     }
     impl CounterPeer {
-        pub async fn increase(&amp;mut self) -&gt; ::srpc::sia::Result&lt;u64&gt; {
+        pub async fn increase(&amp;mut self) -&gt; ::srpc::canary::Result&lt;u64&gt; {
             self.0.send(__srpc_action::increase).await?;
             self.0.receive().await
         }
@@ -385,7 +385,7 @@ const _: () = {
 </span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="routes"><a class="header" href="#routes">Routes</a></h1>
 <p>Routes are concurrent hashmaps that can store services and routes.
-By default, Sia uses a global route, but a local ones can be created and worked with too.</p>
+By default, Canary uses a global route, but a local ones can be created and worked with too.</p>
 <p>Services are registered in routes and routes can also be registered in routes.</p>
 <p>A route roughly looks like this:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
@@ -406,7 +406,7 @@ enum RouteValue {
 </span></code></pre></pre>
 <p>Registering a service on a route looks like this (we're using the example from the services chapter):</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -427,7 +427,7 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 
 </code></pre></pre>
 <p>Routes can also be an abstraction over an actor, with services being their methods
-and metadata being their state. Sia provides an ergonomic way of creating routes
+and metadata being their state. Canary provides an ergonomic way of creating routes
 as actors.</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
@@ -440,11 +440,11 @@ as actors.</p>
 // which may be a nested route or the global route.
 
 
-use sia::{Channel, Result};
+use canary::{Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 
-use sia::route;
+use canary::route;
 
 // this is an actor.
 // doesn't need to be wrapped under an Arc as it is done automatically.
@@ -473,8 +473,8 @@ GLOBAL_ROUTE.register_route::&lt;MyCounter&gt;(my_counter)?;
 </span></code></pre></pre>
 <p>Accessing the service looks like this:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::Result;
-use sia::providers::Tcp;
+use canary::Result;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -&gt; Result&lt;()&gt; {
@@ -488,7 +488,7 @@ async fn main() -&gt; Result&lt;()&gt; {
 </code></pre></pre>
 <p>It is important to note that while it is possible to keep routes analogous to actors, they're very
 different, and actors can be easily made with pure services without the need for routes. Still,
-they're an important tool to keep up your belt while working with Sia. You'll get a sense
+they're an important tool to keep up your belt while working with Canary. You'll get a sense
 of when and where to use routes with experience.</p>
 <p>A good rule to avoid name collisions on the global route is that libraries should not use the global route,
 but instead provide register implementations for their services and routes.</p>
@@ -502,12 +502,12 @@ which provides non-encrypted TCP channels to a route.</p>
 <p>Providers offer a simple interface for exposing routes through them.
 An example of a TCP provider in use:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use sia::providers::Tcp;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -&gt; Result&lt;()&gt; {
@@ -527,8 +527,8 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 </code></pre></pre>
 <p>Accessing the counter service should be as easy as:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::Result;
-use sia::providers::Tcp;
+use canary::Result;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -&gt; Result&lt;()&gt; {
@@ -540,7 +540,7 @@ async fn main() -&gt; Result&lt;()&gt; {
 </code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
 <p>To prepare yourself to build custom distributed systems,
-you will have to build a set of distributed systems with Sia.</p>
+you will have to build a set of distributed systems with Canary.</p>
 <p>Some examples have been prepared for you to build along,
 and a final challenge for you to try building individually.</p>
 <p>The examples you have to build are the following (in order):</p>
@@ -552,9 +552,9 @@ and a final challenge for you to try building individually.</p>
 <p>Do note that it is assumed that you have used the Rust programming language
 and are comfortable with it, as some of these projects can be demanding.</p>
 <p>If you still don't understand how things work, don't be afraid to take a look
-at the code, since the codebase is relatively small; Sia is implemented in ~600 sloc,
+at the code, since the codebase is relatively small; Canary is implemented in ~600 sloc,
 and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
-<p>You can also take a look at the code from SailDB, a key-value in-memory database designed to be
+<p>You can also take a look at the code from <a href="https://github.com/znx3p0/saildb">SailDB</a>, a key-value in-memory database designed to be
 extremely simple and performant, but it uses SRPC as a backend for writing services.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
 <p>The final challenge is to build a distributed consensus algorithm.</p>
@@ -577,6 +577,20 @@ extremely simple and performant, but it uses SRPC as a backend for writing servi
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

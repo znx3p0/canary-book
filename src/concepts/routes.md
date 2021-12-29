@@ -1,7 +1,7 @@
 # Routes
 
 Routes are concurrent hashmaps that can store services and routes.
-By default, Sia uses a global route, but a local ones can be created and worked with too.
+By default, Canary uses a global route, but a local ones can be created and worked with too.
 
 Services are registered in routes and routes can also be registered in routes.
 
@@ -23,7 +23,7 @@ enum RouteValue {
 Registering a service on a route looks like this (we're using the example from the services chapter):
 ```rust , no_run
 
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -45,7 +45,7 @@ async fn counter_service(counter: Arc<AtomicU64>, mut peer: Channel) -> Result<(
 ```
 
 Routes can also be an abstraction over an actor, with services being their methods
-and metadata being their state. Sia provides an ergonomic way of creating routes
+and metadata being their state. Canary provides an ergonomic way of creating routes
 as actors.
 
 ```rust , no_run
@@ -57,11 +57,11 @@ as actors.
 // which may be a nested route or the global route.
 
 
-use sia::{Channel, Result};
+use canary::{Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 
-use sia::route;
+use canary::route;
 
 // this is an actor.
 // doesn't need to be wrapped under an Arc as it is done automatically.
@@ -89,8 +89,8 @@ GLOBAL_ROUTE.register_route::<MyCounter>(my_counter)?;
 Accessing the service looks like this:
 ```rust , no_run
 
-use sia::Result;
-use sia::providers::Tcp;
+use canary::Result;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -> Result<()> {
@@ -105,7 +105,7 @@ async fn main() -> Result<()> {
 
 It is important to note that while it is possible to keep routes analogous to actors, they're very
 different, and actors can be easily made with pure services without the need for routes. Still,
-they're an important tool to keep up your belt while working with Sia. You'll get a sense
+they're an important tool to keep up your belt while working with Canary. You'll get a sense
 of when and where to use routes with experience.
 
 A good rule to avoid name collisions on the global route is that libraries should not use the global route,

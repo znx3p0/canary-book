@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Sia</title>
+        <title>Introduction - Canary</title>
 
 
         <!-- Custom HTML head -->
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -143,21 +143,21 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Sia is a simple distributed systems communication framework.
+<p>Canary is a simple distributed systems communication framework.
 It provides a simple interface for you to code without having
 to worry about the communication backend and more.</p>
-<p>Sia's core principles are a high-level of abstraction and minimalism,
-while keeping configurability and flexibility. Sia also strives
+<p>Canary's core principles are a high-level of abstraction and minimalism,
+while keeping configurability and flexibility. Canary also strives
 to be a zero-cost abstraction, offering as much performance as possible.</p>
-<p>Sia is not opinionated on project structure and only provides tools and more
+<p>Canary is not opinionated on project structure and only provides tools and more
 to make it easier to create distributed systems.</p>
-<p>Unlike most distributed systems libraries, Sia has object stream-based communication
-instead of rpc-based communication. This means that Sia is usually more performant than
+<p>Unlike most distributed systems libraries, Canary has object stream-based communication
+instead of rpc-based communication. This means that Canary is usually more performant than
 other similar solutions such as gRPC and is comparable to websockets, but is more ergonomic
 and usually performs better than websockets.</p>
 <p>Still, this library may be a little too low-level for <em>some</em> use cases.</p>
-<p>Should your project use Sia?
-Sia fits these use cases perfectly.</p>
+<p>Should your project use Canary?
+Canary fits these use cases perfectly.</p>
 <ul>
 <li>You want to build an RPC system</li>
 <li>You want to build a consensus algorithm</li>
@@ -166,7 +166,7 @@ Sia fits these use cases perfectly.</p>
 <li>Anything that's got to do with distributed systems or communications</li>
 </ul>
 <p><strong>DISCLAIMER</strong></p>
-<p>Sia is not yet on 1.0, which means that the API is prone to changes. Nevertheless,
+<p>Canary is not yet on 1.0, which means that the API is prone to changes. Nevertheless,
 the concepts should be stable <strong>BUT</strong> they are still prone to changes.</p>
 
                     </main>
@@ -192,6 +192,20 @@ the concepts should be stable <strong>BUT</strong> they are still prone to chang
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

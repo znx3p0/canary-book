@@ -11,12 +11,12 @@ An example of a TCP provider in use:
 
 ```rust , no_run
 
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use sia::providers::Tcp;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -> Result<()> {
@@ -38,8 +38,8 @@ async fn counter_service(counter: Arc<AtomicU64>, mut peer: Channel) -> Result<(
 Accessing the counter service should be as easy as:
 ```rust , no_run
 
-use sia::Result;
-use sia::providers::Tcp;
+use canary::Result;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -> Result<()> {

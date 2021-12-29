@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Providers - Sia</title>
+        <title>Providers - Canary</title>
 
 
         <!-- Custom HTML head -->
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -150,12 +150,12 @@ which provides non-encrypted TCP channels to a route.</p>
 <p>Providers offer a simple interface for exposing routes through them.
 An example of a TCP provider in use:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use sia::providers::Tcp;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -&gt; Result&lt;()&gt; {
@@ -175,8 +175,8 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 </code></pre></pre>
 <p>Accessing the counter service should be as easy as:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
-use sia::Result;
-use sia::providers::Tcp;
+use canary::Result;
+use canary::providers::Tcp;
 
 #[main]
 async fn main() -&gt; Result&lt;()&gt; {
@@ -216,6 +216,20 @@ async fn main() -&gt; Result&lt;()&gt; {
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

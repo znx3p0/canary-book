@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Services - Sia</title>
+        <title>Services - Canary</title>
 
 
         <!-- Custom HTML head -->
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -150,7 +150,7 @@ They also return a result, but failures are silently logged.</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{service, Channel, Result};
+</span>use canary::{service, Channel, Result};
 
 #[service]
 async fn my_service(channel: Channel) -&gt; Result&lt;()&gt; {
@@ -166,7 +166,7 @@ A service like that could be implemented like this:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{service, Channel, Result};
+</span>use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -200,18 +200,18 @@ async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&g
 </span><span class="boring">fn main() {
 </span>#[allow(non_camel_case_types)]
 struct get_id;
-impl ::sia::service::Service for get_id {
+impl ::canary::service::Service for get_id {
     const ENDPOINT: &amp;'static str = &quot;get_id&quot;;
     type Pipeline = ();
     type Meta = Arc&lt;u64&gt;;
     fn service(
-        __sia_inner_meta: Arc&lt;u64&gt;,
-    ) -&gt; Box&lt;dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
+        __canary_inner_meta: Arc&lt;u64&gt;,
+    ) -&gt; Box&lt;dyn Fn(::canary::igcp::BareChannel) + Send + Sync + 'static&gt; {
         async fn get_id(counter: Arc&lt;u64&gt;, mut peer: Channel) -&gt; Result&lt;()&gt; {
             peer.send(counter).await?;
             Ok(())
         }
-        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+        ::canary::service::run_metadata(__canary_inner_meta, get_id)
     }
 }
 <span class="boring">}
@@ -242,12 +242,12 @@ impl Counter {
 </span>struct Counter {
     counter: u64,
 }
-impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+impl ::srpc::canary::routes::RegisterEndpoint for Counter {
     const ENDPOINT: &amp;'static str = &quot;counter&quot;;
 }
-struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData&lt;()&gt;);
-impl From&lt;::srpc::sia::Channel&gt; for CounterPeer {
-    fn from(c: ::srpc::sia::Channel) -&gt; Self {
+struct CounterPeer(pub ::srpc::canary::Channel, ::core::marker::PhantomData&lt;()&gt;);
+impl From&lt;::srpc::canary::Channel&gt; for CounterPeer {
+    fn from(c: ::srpc::canary::Channel) -&gt; Self {
         CounterPeer(c, ::core::marker::PhantomData::default())
     }
 }
@@ -267,17 +267,17 @@ const _: () = {
     enum __srpc_action {
         increase,
     }
-    impl ::srpc::sia::service::Service for Counter {
+    impl ::srpc::canary::service::Service for Counter {
         const ENDPOINT: &amp;'static str = &quot;counter&quot;;
         type Pipeline = ();
         type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
         fn service(
             __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-        ) -&gt; Box&lt;dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static&gt; {
-            ::sia::service::run_metadata(
+        ) -&gt; Box&lt;dyn Fn(::srpc::canary::igcp::BareChannel) + Send + Sync + 'static&gt; {
+            ::canary::service::run_metadata(
                 __srpc_inner_meta,
                 |__srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                 mut __srpc_inner_channel: ::srpc::canary::Channel| async move {
                     loop {
                         match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
                             __srpc_action::increase =&gt; {
@@ -290,14 +290,14 @@ const _: () = {
             )
         }
     }
-    impl ::srpc::sia::service::StaticService for Counter {
+    impl ::srpc::canary::service::StaticService for Counter {
         type Meta = ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;;
-        type Chan = ::srpc::sia::Channel;
+        type Chan = ::srpc::canary::Channel;
         fn introduce(
             __srpc_inner_meta: ::std::sync::Arc&lt;::srpc::RwLock&lt;Counter&gt;&gt;,
-            mut __srpc_inner_channel: ::srpc::sia::Channel,
-        ) -&gt; ::srpc::sia::runtime::JoinHandle&lt;::srpc::sia::Result&lt;()&gt;&gt; {
-            ::srpc::sia::runtime::spawn(async move {
+            mut __srpc_inner_channel: ::srpc::canary::Channel,
+        ) -&gt; ::srpc::canary::runtime::JoinHandle&lt;::srpc::canary::Result&lt;()&gt;&gt; {
+            ::srpc::canary::runtime::spawn(async move {
                 loop {
                     match __srpc_inner_channel.receive::&lt;__srpc_action&gt;().await? {
                         __srpc_action::increase =&gt; {
@@ -310,7 +310,7 @@ const _: () = {
         }
     }
     impl CounterPeer {
-        pub async fn increase(&amp;mut self) -&gt; ::srpc::sia::Result&lt;u64&gt; {
+        pub async fn increase(&amp;mut self) -&gt; ::srpc::canary::Result&lt;u64&gt; {
             self.0.send(__srpc_action::increase).await?;
             self.0.receive().await
         }
@@ -348,6 +348,20 @@ const _: () = {
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

@@ -1,6 +1,6 @@
 # Concepts
 
-Sia has few core concepts that need to be fully understood before anything.
+Canary has few core concepts that need to be fully understood before anything.
 
 The concepts are the following:
 - Channels

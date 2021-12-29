@@ -7,7 +7,7 @@ They also return a result, but failures are silently logged.
 
 A simple service looks like this:
 ```rust , no_run
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 
 #[service]
 async fn my_service(channel: Channel) -> Result<()> {
@@ -22,7 +22,7 @@ For example, let's say Alice needs to build a counter service.
 The service must count every call to the service and send back the current number.
 A service like that could be implemented like this:
 ```rust , no_run
-use sia::{service, Channel, Result};
+use canary::{service, Channel, Result};
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -54,18 +54,18 @@ expands to this
 ```rust , no_run
 #[allow(non_camel_case_types)]
 struct get_id;
-impl ::sia::service::Service for get_id {
+impl ::canary::service::Service for get_id {
     const ENDPOINT: &'static str = "get_id";
     type Pipeline = ();
     type Meta = Arc<u64>;
     fn service(
-        __sia_inner_meta: Arc<u64>,
-    ) -> Box<dyn Fn(::sia::igcp::BareChannel) + Send + Sync + 'static> {
+        __canary_inner_meta: Arc<u64>,
+    ) -> Box<dyn Fn(::canary::igcp::BareChannel) + Send + Sync + 'static> {
         async fn get_id(counter: Arc<u64>, mut peer: Channel) -> Result<()> {
             peer.send(counter).await?;
             Ok(())
         }
-        ::sia::service::run_metadata(__sia_inner_meta, get_id)
+        ::canary::service::run_metadata(__canary_inner_meta, get_id)
     }
 }
 ```
@@ -93,12 +93,12 @@ expands to this
 struct Counter {
     counter: u64,
 }
-impl ::srpc::sia::routes::RegisterEndpoint for Counter {
+impl ::srpc::canary::routes::RegisterEndpoint for Counter {
     const ENDPOINT: &'static str = "counter";
 }
-struct CounterPeer(pub ::srpc::sia::Channel, ::core::marker::PhantomData<()>);
-impl From<::srpc::sia::Channel> for CounterPeer {
-    fn from(c: ::srpc::sia::Channel) -> Self {
+struct CounterPeer(pub ::srpc::canary::Channel, ::core::marker::PhantomData<()>);
+impl From<::srpc::canary::Channel> for CounterPeer {
+    fn from(c: ::srpc::canary::Channel) -> Self {
         CounterPeer(c, ::core::marker::PhantomData::default())
     }
 }
@@ -118,17 +118,17 @@ const _: () = {
     enum __srpc_action {
         increase,
     }
-    impl ::srpc::sia::service::Service for Counter {
+    impl ::srpc::canary::service::Service for Counter {
         const ENDPOINT: &'static str = "counter";
         type Pipeline = ();
         type Meta = ::std::sync::Arc<::srpc::RwLock<Counter>>;
         fn service(
             __srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
-        ) -> Box<dyn Fn(::srpc::sia::igcp::BareChannel) + Send + Sync + 'static> {
-            ::sia::service::run_metadata(
+        ) -> Box<dyn Fn(::srpc::canary::igcp::BareChannel) + Send + Sync + 'static> {
+            ::canary::service::run_metadata(
                 __srpc_inner_meta,
                 |__srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
-                 mut __srpc_inner_channel: ::srpc::sia::Channel| async move {
+                 mut __srpc_inner_channel: ::srpc::canary::Channel| async move {
                     loop {
                         match __srpc_inner_channel.receive::<__srpc_action>().await? {
                             __srpc_action::increase => {
@@ -141,14 +141,14 @@ const _: () = {
             )
         }
     }
-    impl ::srpc::sia::service::StaticService for Counter {
+    impl ::srpc::canary::service::StaticService for Counter {
         type Meta = ::std::sync::Arc<::srpc::RwLock<Counter>>;
-        type Chan = ::srpc::sia::Channel;
+        type Chan = ::srpc::canary::Channel;
         fn introduce(
             __srpc_inner_meta: ::std::sync::Arc<::srpc::RwLock<Counter>>,
-            mut __srpc_inner_channel: ::srpc::sia::Channel,
-        ) -> ::srpc::sia::runtime::JoinHandle<::srpc::sia::Result<()>> {
-            ::srpc::sia::runtime::spawn(async move {
+            mut __srpc_inner_channel: ::srpc::canary::Channel,
+        ) -> ::srpc::canary::runtime::JoinHandle<::srpc::canary::Result<()>> {
+            ::srpc::canary::runtime::spawn(async move {
                 loop {
                     match __srpc_inner_channel.receive::<__srpc_action>().await? {
                         __srpc_action::increase => {
@@ -161,7 +161,7 @@ const _: () = {
         }
     }
     impl CounterPeer {
-        pub async fn increase(&mut self) -> ::srpc::sia::Result<u64> {
+        pub async fn increase(&mut self) -> ::srpc::canary::Result<u64> {
             self.0.send(__srpc_action::increase).await?;
             self.0.receive().await
         }

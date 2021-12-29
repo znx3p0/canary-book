@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Channels - Sia</title>
+        <title>Channels - Canary</title>
 
 
         <!-- Custom HTML head -->
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -150,7 +150,7 @@ you to send and receive objects or messages.</p>
 <pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use sia::{Channel, Result};
+</span>use canary::{Channel, Result};
 
 // runs on Alice's machine
 async fn alice(mut chan: Channel) -&gt; Result&lt;()&gt; {
@@ -200,6 +200,20 @@ formats such as JSON, BSON and Postcard.</p>
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

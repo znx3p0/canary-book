@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Examples - Sia</title>
+        <title>Examples - Canary</title>
 
 
         <!-- Custom HTML head -->
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Sia</h1>
+                    <h1 class="menu-title">Canary</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -144,7 +144,7 @@
                     <main>
                         <h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
 <p>To prepare yourself to build custom distributed systems,
-you will have to build a set of distributed systems with Sia.</p>
+you will have to build a set of distributed systems with Canary.</p>
 <p>Some examples have been prepared for you to build along,
 and a final challenge for you to try building individually.</p>
 <p>The examples you have to build are the following (in order):</p>
@@ -156,9 +156,9 @@ and a final challenge for you to try building individually.</p>
 <p>Do note that it is assumed that you have used the Rust programming language
 and are comfortable with it, as some of these projects can be demanding.</p>
 <p>If you still don't understand how things work, don't be afraid to take a look
-at the code, since the codebase is relatively small; Sia is implemented in ~600 sloc,
+at the code, since the codebase is relatively small; Canary is implemented in ~600 sloc,
 and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
-<p>You can also take a look at the code from SailDB, a key-value in-memory database designed to be
+<p>You can also take a look at the code from <a href="https://github.com/znx3p0/saildb">SailDB</a>, a key-value in-memory database designed to be
 extremely simple and performant, but it uses SRPC as a backend for writing services.</p>
 
                     </main>
@@ -190,6 +190,20 @@ extremely simple and performant, but it uses SRPC as a backend for writing servi
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3000/__livereload");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 
