@@ -37,7 +37,6 @@ async fn counter_service(counter: Arc<AtomicU64>, mut peer: Channel) -> Result<(
 
 Accessing the counter service should be as easy as:
 ```rust , no_run
-
 use canary::Result;
 use canary::providers::Tcp;
 
@@ -47,7 +46,6 @@ async fn main() -> Result<()> {
     let current = counter_service_chan.receive().await?;
     println!("current value: {}", current);
 }
-
 ```
 
 

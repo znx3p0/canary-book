@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="concepts/services.html"><strong aria-hidden="true">2.2.</strong> Services</a></li><li class="chapter-item expanded "><a href="concepts/routes.html"><strong aria-hidden="true">2.3.</strong> Routes</a></li><li class="chapter-item expanded "><a href="concepts/providers.html"><strong aria-hidden="true">2.4.</strong> Providers</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">3.</strong> Examples</a></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">3.1.</strong> RPC System</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.2.</strong> Pub-Sub Server</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.3.</strong> Key-Value In-Memory Database</div></li><li class="chapter-item expanded "><a href="examples/final_challenge.html"><strong aria-hidden="true">3.4.</strong> Final Challenge</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="concepts/services.html"><strong aria-hidden="true">2.2.</strong> Services</a></li><li class="chapter-item expanded "><a href="concepts/routes.html"><strong aria-hidden="true">2.3.</strong> Routes</a></li><li class="chapter-item expanded "><a href="concepts/providers.html"><strong aria-hidden="true">2.4.</strong> Providers</a></li><li class="chapter-item expanded "><a href="concepts/wire-representation.html"><strong aria-hidden="true">2.5.</strong> Wire Representation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">3.</strong> Examples</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/introduction.html"><strong aria-hidden="true">3.1.</strong> Ping-Pong Server</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/structure.html"><strong aria-hidden="true">3.1.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/service.html"><strong aria-hidden="true">3.1.2.</strong> Service</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/server.html"><strong aria-hidden="true">3.1.3.</strong> Server</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/peer.html"><strong aria-hidden="true">3.1.4.</strong> Peer</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/conclusion.html"><strong aria-hidden="true">3.1.5.</strong> Conclusion</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.2.</strong> Distributed Fibonacci Calculator</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.3.</strong> Key-Value In-Memory Database</div></li><li class="chapter-item expanded "><a href="examples/final_challenge.html"><strong aria-hidden="true">3.4.</strong> Final Challenge</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -526,8 +526,7 @@ async fn counter_service(counter: Arc&lt;AtomicU64&gt;, mut peer: Channel) -&gt;
 
 </code></pre></pre>
 <p>Accessing the counter service should be as easy as:</p>
-<pre><pre class="playground"><code class="language-rust   no_run">
-use canary::Result;
+<pre><pre class="playground"><code class="language-rust   no_run">use canary::Result;
 use canary::providers::Tcp;
 
 #[main]
@@ -536,8 +535,87 @@ async fn main() -&gt; Result&lt;()&gt; {
     let current = counter_service_chan.receive().await?;
     println!(&quot;current value: {}&quot;, current);
 }
-
 </code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="wire-representation"><a class="header" href="#wire-representation">Wire Representation</a></h1>
+<p>If you don't care about efficiency or serialization, skip this section.
+Wire representation is how your protocol looks like on the wire.</p>
+<p>It's important to know about the wire representation and channel representation
+of the protocols you build on top of Canary, since ALL distributed systems and
+communications have a channel representation (what is sent through the wire and what is
+received through the wire in order) and a wire representation (what is sent through
+the wire and received through the wire but separated) even those that aren't built on top of Canary.</p>
+<p>Wire and channel representations also help debug distributed systems and also help know which types are equivalent on the
+wire ( e.g. &amp;str and String have an equivalent wire representation ).</p>
+<p>The differences between the wire representation and channel representation is that
+the wire representation is divided into inbound (receiving) wire representation and
+outbound (sending) wire representation.</p>
+<p>An example wire representation:</p>
+<pre><code>send:
+    # position 1
+    1 u16,
+    # position 3
+    3 u16,
+receive:
+    # position 2
+    2 u16,
+</code></pre>
+<p>This outbound wire representation looks like this on the wire:</p>
+<pre><code>(outbound)
+    1   3
+-&gt; 0x0 0x0
+
+(inbound)
+    2
+&lt;- 0x0
+</code></pre>
+<p>Common wire-equivalent types are:</p>
+<ul>
+<li><code>Vec&lt;T&gt;</code> and <code>[T]</code></li>
+<li><code>String</code> and <code>str</code></li>
+<li><code>u16</code> and <code>[u8; 2]</code></li>
+<li><code>u32</code> and <code>[u8; 4]</code></li>
+<li><code>u64</code> and <code>[u8; 8]</code></li>
+</ul>
+<p>Another example of a wire representation:</p>
+<pre><code>send:
+    1 [u8; 2],
+    2 String,
+
+receive:
+    3 Vec&lt;u16&gt;,
+    4 u16
+</code></pre>
+<p>Astute readers may have noticed that we run into a problem when trying to
+represent this wire representation:
+What about <code>String</code> and <code>Vec&lt;u8&gt;</code>?
+They are dynamically sized, so their length is sent first (as an u64),
+and then they're serialized and sent, so they look like this:</p>
+<pre><code>-&gt;
+    1 # [u8; 2]
+    0x0 0x0
+
+    2 # length of serialized object
+    0x0 0x0 0x0 0x0
+
+    # a unit struct represents a dynamically sized object
+    ()
+
+&lt;-
+    3 # Vec&lt;u16&gt;, dynamically sized
+    0x0 0x0 0x0 0x0 ()
+
+    4 0x0
+</code></pre>
+<p>A condensed version of this wire representation looks like this:</p>
+<pre><code>-&gt;
+    1 0x0 0x0
+    2 0x0 0x0 0x0 0x0 ()
+&lt;-
+    3 0x0 0x0 0x0 0x0 ()
+    4 0x0
+</code></pre>
+<p>Currently due to simplicity, IGCP sends all objects (even wire statically-sized-types) as dynamically sized.
+This means that there is space for improvement, but it is still sufficiently efficient for most use cases.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
 <p>To prepare yourself to build custom distributed systems,
 you will have to build a set of distributed systems with Canary.</p>
@@ -545,8 +623,8 @@ you will have to build a set of distributed systems with Canary.</p>
 and a final challenge for you to try building individually.</p>
 <p>The examples you have to build are the following (in order):</p>
 <ul>
-<li>An RPC system.</li>
-<li>A pub-sub server.</li>
+<li>A ping-pong server.</li>
+<li>A distributed fibonacci calculator.</li>
 <li>A key-value in-memory database.</li>
 </ul>
 <p>Do note that it is assumed that you have used the Rust programming language
@@ -556,6 +634,117 @@ at the code, since the codebase is relatively small; Canary is implemented in ~6
 and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
 <p>You can also take a look at the code from <a href="https://github.com/znx3p0/saildb">SailDB</a>, a key-value in-memory database designed to be
 extremely simple and performant, but it uses SRPC as a backend for writing services.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ping-pong-server"><a class="header" href="#ping-pong-server">Ping-Pong Server</a></h1>
+<p>Ping-Pong are usually the hello-world of distributed systems,
+they help learn how to get the tedious parts of distributed systems done,
+such as networking and messaging.</p>
+<p>The ping-pong server will receive a ping and then send a pong to the peer.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
+<p>For the ping-pong server, we will need:</p>
+<ul>
+<li>A ping-pong service</li>
+<li>A provider to expose our service</li>
+</ul>
+<p>If you want to go ahead and do the example, skip this section.</p>
+<p>The ping-pong service has the following channel representation:</p>
+<pre><code>receive String -&gt; send String
+</code></pre>
+<p>and the following wire representation:</p>
+<pre><code>receive:
+    1 String,
+send:
+    2 String,
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="service"><a class="header" href="#service">Service</a></h1>
+<p>Now that we have the following channel representation:</p>
+<pre><code>receive:
+    1 String,
+send:
+    2 String,
+</code></pre>
+<p>We can make a service:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[service]
+async fn ping_service(mut channel: Channel) -&gt; Result&lt;()&gt; {
+    // receive 1, type String
+    let ping: String = channel.receive().await?;
+    println!(&quot;received {ping}&quot;);
+    
+    // send 2, type String. str and String have equivalent wire representations,
+    // so this is safe.
+    channel.send(&quot;Pong!&quot;).await?;
+    Ok(())
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="server"><a class="header" href="#server">Server</a></h1>
+<p>Now that we have a service that represents our ping-pong server,
+we want to expose it.</p>
+<p>To expose a service we have to do two things:</p>
+<ul>
+<li>Add the service to a route</li>
+<li>Expose the route</li>
+</ul>
+<p>You can add the service to a route(in this case the global route) like this:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>                          name of service | location of service
+GLOBAL_ROUTE.add_service_at::&lt;ping_service&gt;(&quot;ping&quot;, ())?;
+<span class="boring">}
+</span></code></pre></pre>
+<p>The second argument <code>()</code> is the metadata of the service, but since this service
+doesn't take any metadata, it defaults to <code>()</code>.</p>
+<p>To expose the route we have to choose a provider,
+after choosing a provider, we can expose the route like this:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Tcp::bind(&quot;127.0.0.1:8080&quot;).await?;
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="peer"><a class="header" href="#peer">Peer</a></h1>
+<p>After exposing our service, we can access it with the following:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// get a channel from &quot;127.0.0.1:8080&quot; with the &quot;ping&quot; id
+let mut channel = Tcp::connect(&quot;127.0.0.1:8080&quot;, &quot;ping&quot;).await?;
+channel.send(&quot;Ping!&quot;).await?;
+let pong: String = channel.receive().await?;
+println!(&quot;received {pong}&quot;); // received Pong!
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h1>
+<p>We have now covered how to set up a service on a route,
+how to expose a route and how to connect to a service on a different machine.</p>
+<p>This is pretty much everything you need to know to develop distributed systems
+on Canary, since the fundaments were covered.</p>
+<p>The code written in this example is the following:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">use canary::{service, Channel, Result, routes::GLOBAL_ROUTE, providers::Tcp};
+
+#[canary::main]
+async fn main() -&gt; Result&lt;()&gt; {
+    Tcp::bind(&quot;127.0.0.1:8888&quot;).await?;
+    GLOBAL_ROUTE.add_service_at::&lt;ping_service&gt;(&quot;ping&quot;, ())?;
+
+    let mut channel = Tcp::connect(&quot;127.0.0.1:8888&quot;, &quot;ping&quot;).await?;
+    channel.send(&quot;Ping!&quot;).await?;
+    let pong: String = channel.receive().await?;
+    println!(&quot;received {pong}&quot;);
+    Ok(())
+}
+
+#[service]
+async fn ping_service(mut channel: Channel) -&gt; Result&lt;()&gt; {
+    let ping: String = channel.receive().await?;
+    println!(&quot;received {ping}&quot;);
+    channel.send(&quot;Pong!&quot;).await?;
+    Ok(())
+}
+</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
 <p>The final challenge is to build a distributed consensus algorithm.</p>
 <p>Attempts at this challenge should be added to this list as an example:</p>

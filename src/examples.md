@@ -7,8 +7,8 @@ Some examples have been prepared for you to build along,
 and a final challenge for you to try building individually.
 
 The examples you have to build are the following (in order):
-- An RPC system.
-- A pub-sub server.
+- A ping-pong server.
+- A distributed fibonacci calculator.
 - A key-value in-memory database.
 
 Do note that it is assumed that you have used the Rust programming language
