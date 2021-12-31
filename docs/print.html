@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="concepts/services.html"><strong aria-hidden="true">2.2.</strong> Services</a></li><li class="chapter-item expanded "><a href="concepts/routes.html"><strong aria-hidden="true">2.3.</strong> Routes</a></li><li class="chapter-item expanded "><a href="concepts/providers.html"><strong aria-hidden="true">2.4.</strong> Providers</a></li><li class="chapter-item expanded "><a href="concepts/wire-representation.html"><strong aria-hidden="true">2.5.</strong> Wire Representation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">3.</strong> Examples</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/introduction.html"><strong aria-hidden="true">3.1.</strong> Ping-Pong Server</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/structure.html"><strong aria-hidden="true">3.1.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/service.html"><strong aria-hidden="true">3.1.2.</strong> Service</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/server.html"><strong aria-hidden="true">3.1.3.</strong> Server</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/peer.html"><strong aria-hidden="true">3.1.4.</strong> Peer</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/conclusion.html"><strong aria-hidden="true">3.1.5.</strong> Conclusion</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.2.</strong> Distributed Fibonacci Calculator</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.3.</strong> Key-Value In-Memory Database</div></li><li class="chapter-item expanded "><a href="examples/final_challenge.html"><strong aria-hidden="true">3.4.</strong> Final Challenge</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="concepts/services.html"><strong aria-hidden="true">2.2.</strong> Services</a></li><li class="chapter-item expanded "><a href="concepts/routes.html"><strong aria-hidden="true">2.3.</strong> Routes</a></li><li class="chapter-item expanded "><a href="concepts/providers.html"><strong aria-hidden="true">2.4.</strong> Providers</a></li><li class="chapter-item expanded "><a href="concepts/wire-representation.html"><strong aria-hidden="true">2.5.</strong> Wire Representation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">3.</strong> Examples</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/introduction.html"><strong aria-hidden="true">3.1.</strong> Ping-Pong Server</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/ping-pong/structure.html"><strong aria-hidden="true">3.1.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/service.html"><strong aria-hidden="true">3.1.2.</strong> Service</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/server.html"><strong aria-hidden="true">3.1.3.</strong> Server</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/peer.html"><strong aria-hidden="true">3.1.4.</strong> Peer</a></li><li class="chapter-item expanded "><a href="examples/ping-pong/conclusion.html"><strong aria-hidden="true">3.1.5.</strong> Conclusion</a></li></ol></li><li class="chapter-item expanded "><a href="examples/dist-fib/introduction.html"><strong aria-hidden="true">3.2.</strong> Distributed Fibonacci Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="examples/dist-fib/structure.html"><strong aria-hidden="true">3.2.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="examples/dist-fib/node.html"><strong aria-hidden="true">3.2.2.</strong> Node</a></li><li class="chapter-item expanded "><a href="examples/dist-fib/cluster.html"><strong aria-hidden="true">3.2.3.</strong> Cluster</a></li><li class="chapter-item expanded "><a href="examples/dist-fib/cli.html"><strong aria-hidden="true">3.2.4.</strong> Command line</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.2.5.</strong> Client</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.2.6.</strong> Conclusion</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.3.</strong> Key-Value In-Memory Database</div></li><li class="chapter-item expanded "><a href="examples/final_challenge.html"><strong aria-hidden="true">3.4.</strong> Final Challenge</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -635,7 +635,7 @@ and igcp (the library that provides channels) is implemented in ~900 sloc.</p>
 <p>You can also take a look at the code from <a href="https://github.com/znx3p0/saildb">SailDB</a>, a key-value in-memory database designed to be
 extremely simple and performant, but it uses SRPC as a backend for writing services.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ping-pong-server"><a class="header" href="#ping-pong-server">Ping-Pong Server</a></h1>
-<p>Ping-Pong are usually the hello-world of distributed systems,
+<p>Ping-Pong servers are usually the hello-world of distributed systems,
 they help learn how to get the tedious parts of distributed systems done,
 such as networking and messaging.</p>
 <p>The ping-pong server will receive a ping and then send a pong to the peer.</p>
@@ -645,7 +645,6 @@ such as networking and messaging.</p>
 <li>A ping-pong service</li>
 <li>A provider to expose our service</li>
 </ul>
-<p>If you want to go ahead and do the example, skip this section.</p>
 <p>The ping-pong service has the following channel representation:</p>
 <pre><code>receive String -&gt; send String
 </code></pre>
@@ -707,7 +706,7 @@ after choosing a provider, we can expose the route like this:</p>
 </span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="peer"><a class="header" href="#peer">Peer</a></h1>
 <p>After exposing our service, we can access it with the following:</p>
-<pre><pre class="playground"><code class="language-rust">
+<pre><pre class="playground"><code class="language-rust   no_run">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// get a channel from &quot;127.0.0.1:8080&quot; with the &quot;ping&quot; id
@@ -721,7 +720,7 @@ println!(&quot;received {pong}&quot;); // received Pong!
 <p>We have now covered how to set up a service on a route,
 how to expose a route and how to connect to a service on a different machine.</p>
 <p>This is pretty much everything you need to know to develop distributed systems
-on Canary, since the fundaments were covered.</p>
+on Canary, since the fundamentals were covered.</p>
 <p>The code written in this example is the following:</p>
 <pre><pre class="playground"><code class="language-rust   no_run">use canary::{service, Channel, Result, routes::GLOBAL_ROUTE, providers::Tcp};
 
@@ -745,6 +744,232 @@ async fn ping_service(mut channel: Channel) -&gt; Result&lt;()&gt; {
     Ok(())
 }
 </code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="distributed-fibonacci-calculator"><a class="header" href="#distributed-fibonacci-calculator">Distributed Fibonacci Calculator</a></h1>
+<p>In this example you'll learn how to simulate nodes and clusters
+with Canary and SRPC by creating a distributed fibonacci calculator.</p>
+<p>You will also learn how to optimize distributed systems built with Canary.</p>
+<p>To complete this example, you'll need to know how to use structopt.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="structure-1"><a class="header" href="#structure-1">Structure</a></h1>
+<p>We'll start by defining how our distributed fibonacci calculator
+looks like on the conceptual level.</p>
+<p>This distributed fibonacci calculator will have a master server
+and computing nodes connected to it, requests will be sent to
+the master server and the master server will ask a computing
+node to compute fibonacci, send it back and finally send the
+result to the peer.</p>
+<p>The channel representation of this protocol should be the following:</p>
+<pre><code>enum Kind {
+    Client, Server
+}
+
+top:
+    1 receive Kind,
+
+    match 1 {
+        Server =&gt; server,
+        client =&gt; client,
+    }
+
+server:
+    1 receive u32
+    2 send u32
+
+client:
+    1 send u32
+    2 receive u32
+</code></pre>
+<p>the channel representation is from the perspective of the cluster,
+so there are three possible kinds of nodes in this distributed system:</p>
+<ul>
+<li>Cluster</li>
+<li>Node</li>
+<li>Client</li>
+</ul>
+<p>The cluster receives requests from clients,
+the nodes compute the requests and clients send
+requests to the cluster.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="node"><a class="header" href="#node">Node</a></h1>
+<p>The protocol defines the node as a service that computes
+fibonacci numbers.</p>
+<p>Implementing this in SRPC looks like this:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[srpc::rpc]
+struct Node;
+
+#[srpc::rpc]
+impl Node {
+    async fn fibonacci(&amp;self, number: u32) -&gt; u32 {
+        fibonacci(number)
+    }
+}
+
+#[inline(always)]
+fn fibonacci(number: u32) -&gt; u32 {
+    let mut a = 0;
+    let mut b = 1;
+    for _ in 0..number {
+        let tmp = a;
+        a = b;
+        b = a + tmp;
+    }
+    b
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The macro automatically generates a peer and a service implementation.
+You can use <code>&amp;mut self</code> and <code>&amp;self</code> in rpc methods. RPC methods by default
+use a RwLock, but one can use a Mutex (<code>#[srpc::rpc(mutex)]</code>) instead or nothing (<code>#[srpc::rpc(none)]</code>), but that means that
+you'll only have read-only access to the struct.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cluster"><a class="header" href="#cluster">Cluster</a></h1>
+<p>The protocol defined the cluster as having a connection to the nodes,
+so in this sense, the cluster has a list of the connected nodes.</p>
+<p>This structure can be defined as the following:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Cluster {
+    nodes: Vec&lt;NodePeer&gt;,
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The <code>#[srpc::rpc]</code> macro autogenerated the peer of the Node and named it <code>NodePeer</code>.</p>
+<p>Now, we have to define the RPC's from the cluster.
+We only need the cluster to do two things externally:</p>
+<ul>
+<li>Add nodes</li>
+<li>Compute fibonacci</li>
+</ul>
+<p>To do this, we can start with the distributed compute implementation:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[srpc::rpc]
+impl Cluster {
+    async fn calculate_fib(&amp;mut self, num: u32) -&gt; u32 {
+        if self.nodes.is_empty() {
+            println!(&quot;calculating fib locally&quot;);
+            // no nodes :(
+            // calculate fib locally instead
+            return fibonacci(num)
+        }
+
+        // get a random node and ask it to compute fibonacci
+        let node_num = fastrand::usize(..self.nodes.len());
+        let node = &amp;mut self.nodes[node_num];
+        println!(&quot;sending op to node&quot;);
+        match node.fibonacci(num).await {
+            Ok(res) =&gt; res,
+            Err(_) =&gt; {
+                println!(&quot;calculating fib locally and removing node&quot;);
+                // error :(
+                // calculate fib locally instead
+                // and remove this node since it is unreliable
+                self.nodes.remove(node_num);
+                fibonacci(num)
+            }
+        }
+
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>We can now easily calculate fibonacci from a cluster peer, but there's one thing left:
+adding nodes to the cluster.</p>
+<p>Peers are made from channels, a <code>Channel</code> can be turned into a Peer through <code>IntoClient</code>,
+but there's a problem. How do we consume the channel backing the RPC?</p>
+<p>We can consume the channel by using the <code>#[consume]</code> attribute on the method.</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[consume]
+async fn insert_node(&amp;mut self, chan: Channel) -&gt; Result&lt;()&gt; {
+    let chan = chan.client::&lt;Node&gt;();
+    self.nodes.push(chan);
+    Ok(())
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The complete implementation of the cluster should look like this:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[srpc::rpc]
+#[derive(Default)]
+struct Cluster {
+    nodes: Vec&lt;NodePeer&gt;,
+}
+
+#[srpc::rpc]
+impl Cluster {
+    #[consume]
+    async fn insert_node(&amp;mut self, chan: Channel) -&gt; Result&lt;()&gt; {
+        let chan = chan.client::&lt;Node&gt;();
+        self.nodes.push(chan);
+        Ok(())
+    }
+    async fn calculate_fib(&amp;mut self, num: u32) -&gt; u32 {
+        if self.nodes.is_empty() {
+            println!(&quot;calculating fib locally&quot;);
+            // no nodes :(
+            // calculate fib locally instead
+            return fibonacci(num)
+        }
+        let node_num = fastrand::usize(..self.nodes.len());
+        let node = &amp;mut self.nodes[node_num];
+        println!(&quot;sending op to node&quot;);
+        match node.fibonacci(num).await {
+            Ok(res) =&gt; res,
+            Err(_) =&gt; {
+                println!(&quot;calculating fib locally and removing node&quot;);
+                // error :(
+                // calculate fib locally instead
+                // and remove this node since it is unreliable
+                self.nodes.remove(node_num);
+                fibonacci(num)
+            }
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="command-line"><a class="header" href="#command-line">Command line</a></h1>
+<p>Now that we've got the code for the cluster and the node,
+we've got to create the interface.</p>
+<p>For this we'll use structopt.</p>
+<p>First we'll define a struct with our commands:</p>
+<pre><pre class="playground"><code class="language-rust   no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(StructOpt, Debug)]
+struct Opt {
+    #[structopt(subcommand)]
+    command: Command,
+}
+
+#[derive(StructOpt, Debug)]
+enum Command {
+    // create a node worker and connect it to cluster with address
+    Node {
+        #[structopt(short, long, parse(try_from_str = Addr::new))]
+        addr: Addr
+    },
+    // create a cluster at address
+    Cluster {
+        #[structopt(short, long, parse(try_from_str = Addr::new))]
+        addr: Addr
+    },
+    // create a cluster at address
+    Client {
+        #[structopt(short, long, parse(try_from_str = Addr::new))]
+        addr: Addr,
+        number: u32
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>[WIP]</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
 <p>The final challenge is to build a distributed consensus algorithm.</p>
 <p>Attempts at this challenge should be added to this list as an example:</p>

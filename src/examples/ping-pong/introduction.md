@@ -1,6 +1,6 @@
 # Ping-Pong Server
 
-Ping-Pong are usually the hello-world of distributed systems,
+Ping-Pong servers are usually the hello-world of distributed systems,
 they help learn how to get the tedious parts of distributed systems done,
 such as networking and messaging.
 

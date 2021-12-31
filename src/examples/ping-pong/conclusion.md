@@ -4,7 +4,7 @@ We have now covered how to set up a service on a route,
 how to expose a route and how to connect to a service on a different machine.
 
 This is pretty much everything you need to know to develop distributed systems
-on Canary, since the fundaments were covered.
+on Canary, since the fundamentals were covered.
 
 The code written in this example is the following:
 ```rust , no_run
