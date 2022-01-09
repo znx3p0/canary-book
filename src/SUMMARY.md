@@ -21,6 +21,6 @@
         - [Command line](./examples/dist-fib/cli.md)
         - [Client]()
         - [Conclusion]()
-    - [Key-Value In-Memory Database]()
+    - [Croc Replica]()
     - [Final Challenge](./examples/final_challenge.md)
 
