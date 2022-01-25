@@ -60,7 +60,7 @@ We can consume the channel by using the `#[consume]` attribute on the method.
 ```rust , no_run
 #[consume]
 async fn insert_node(&mut self, chan: Channel) -> Result<()> {
-    let chan = chan.client::<Node>();
+    let chan = chan.client::<DistributedFibNode>();
     self.nodes.push(chan);
     Ok(())
 }
@@ -70,19 +70,19 @@ The complete implementation of the cluster should look like this:
 ```rust , no_run
 #[srpc::rpc]
 #[derive(Default)]
-struct Cluster {
-    nodes: Vec<NodePeer>,
+struct DistributedFibCluster {
+    nodes: Vec<DistributedFibNodePeer>,
 }
 
 #[srpc::rpc]
-impl Cluster {
+impl DistributedFibCluster {
     #[consume]
-    async fn insert_node(&mut self, chan: Channel) -> Result<()> {
-        let chan = chan.client::<Node>();
+    async fn insert_node(&mut self, chan: Channel) -> Res<()> {
+        let chan = chan.client::<DistributedFibNode>();
         self.nodes.push(chan);
         Ok(())
     }
-    async fn calculate_fib(&mut self, num: u32) -> u32 {
+    async fn calculate_fib(&mut self, num: u64) -> u64 {
         if self.nodes.is_empty() {
             println!("calculating fib locally");
             // no nodes :(
@@ -103,6 +103,7 @@ impl Cluster {
                 fibonacci(num)
             }
         }
+
     }
 }
 ```

@@ -95,3 +95,6 @@ A condensed version of this wire representation looks like this:
 
 Currently due to simplicity, IGCP sends all objects (even wire statically-sized-types) as dynamically sized.
 This means that there is space for improvement, but it is still sufficiently efficient for most use cases.
+
+NOTE ABOUT TYPES:
+Sending and receiving non-equivalent wire represented types can lead to messaging problems that can be hard to debug.

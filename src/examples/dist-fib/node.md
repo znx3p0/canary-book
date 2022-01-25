@@ -5,18 +5,20 @@ fibonacci numbers.
 
 Implementing this in SRPC looks like this:
 ```rust
+#[derive(Default)]
 #[srpc::rpc]
-struct Node;
+struct DistributedFibNode;
 
-#[srpc::rpc]
-impl Node {
-    async fn fibonacci(&self, number: u32) -> u32 {
-        fibonacci(number)
+#[srpc::rpc(none)]
+impl DistributedFibNode {
+    async fn fibonacci(&self, num: u64) -> u64 {
+        println!("calculating fibonacci remotely");
+        fibonacci(num)
     }
 }
 
 #[inline(always)]
-fn fibonacci(number: u32) -> u32 {
+fn fibonacci(number: u64) -> u64 {
     let mut a = 0;
     let mut b = 1;
     for _ in 0..number {

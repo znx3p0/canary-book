@@ -11,15 +11,15 @@ An example of a TCP provider in use:
 
 ```rust , no_run
 
-use canary::{service, Channel, Result};
+use canary::prelude::*;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
 use canary::providers::Tcp;
 
-#[main]
-async fn main() -> Result<()> {
+#[canary::main]
+async fn main() -> Res<()> {
     // bind the global route to this tcp socket
     Tcp::bind("127.0.0.1:8080").await?;
     GLOBAL_ROUTE.add_service::<counter_service>(Arc::new(AtomicU64::new(0)))?;
@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 }
 
 #[service]
-async fn counter_service(counter: Arc<AtomicU64>, mut peer: Channel) -> Result<()> {
+async fn counter_service(mut peer: Channel, counter: Arc<AtomicU64>) -> Res<()> {
     let current_val = counter.fetch_add(1, Ordering::Relaxed);
     peer.send(current_val).await?;
     Ok(())
@@ -43,7 +43,7 @@ use canary::providers::Tcp;
 #[main]
 async fn main() -> Result<()> {
     let mut counter_service_chan = Tcp::connect("127.0.0.1:8080", "counter_service").await?;
-    let current = counter_service_chan.receive().await?;
+    let current: u64 = counter_service_chan.receive().await?;
     println!("current value: {}", current);
 }
 ```

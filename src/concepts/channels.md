@@ -1,7 +1,7 @@
 # Channels
 
 Channels are a backend-agnostic way of communicating with peers.
-You can think of it as a wrapper around a stream (tcp, udp or any other backend) that allows
+You can think of it as a wrapper around a stream (tcp, websockets or any other backend) that allows
 you to send and receive objects or messages.
 
 For example, let's assume you have connected Alice's machine and Bob's machine.

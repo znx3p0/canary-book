@@ -19,8 +19,7 @@
         - [Node](./examples/dist-fib/node.md)
         - [Cluster](./examples/dist-fib/cluster.md)
         - [Command line](./examples/dist-fib/cli.md)
-        - [Client]()
-        - [Conclusion]()
+        - [Conclusion](./examples/dist-fib/conclusion.md)
     - [Croc Replica]()
     - [Final Challenge](./examples/final_challenge.md)
 
