@@ -7,7 +7,8 @@ you to send and receive objects or messages.
 For example, let's assume you have connected Alice's machine and Bob's machine.
 
 ```rust , no_run
-use canary::{Channel, Result};
+use canary::Channel;
+use canary::Result; // result is equivalent to std::io::Result, but it implements `Serialize` / `Deserialize`
 
 // runs on Alice's machine
 async fn alice(mut chan: Channel) -> Result<()> {
@@ -23,8 +24,8 @@ async fn bob(mut chan: Channel) -> Result<()> {
 }
 ```
 
-It is important to note that you can send objects that
-implement `Serialize` and receive objects that implement `Deserialize`.
+You can send objects that implement `Serialize`
+and receive objects that implement `Deserialize`.
 
 Channels by default use Bincode for serialization, but they support various other
 formats such as JSON, BSON and Postcard.

@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="../concepts/services.html"><strong aria-hidden="true">2.2.</strong> Services</a></li><li class="chapter-item expanded "><a href="../concepts/routes.html"><strong aria-hidden="true">2.3.</strong> Routes</a></li><li class="chapter-item expanded "><a href="../concepts/providers.html"><strong aria-hidden="true">2.4.</strong> Providers</a></li><li class="chapter-item expanded "><a href="../concepts/wire-representation.html" class="active"><strong aria-hidden="true">2.5.</strong> Wire Representation</a></li></ol></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">3.</strong> Examples</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../examples/ping-pong/introduction.html"><strong aria-hidden="true">3.1.</strong> Ping-Pong Server</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../examples/ping-pong/structure.html"><strong aria-hidden="true">3.1.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="../examples/ping-pong/service.html"><strong aria-hidden="true">3.1.2.</strong> Service</a></li><li class="chapter-item expanded "><a href="../examples/ping-pong/server.html"><strong aria-hidden="true">3.1.3.</strong> Server</a></li><li class="chapter-item expanded "><a href="../examples/ping-pong/peer.html"><strong aria-hidden="true">3.1.4.</strong> Peer</a></li><li class="chapter-item expanded "><a href="../examples/ping-pong/conclusion.html"><strong aria-hidden="true">3.1.5.</strong> Conclusion</a></li></ol></li><li class="chapter-item expanded "><a href="../examples/dist-fib/introduction.html"><strong aria-hidden="true">3.2.</strong> Distributed Fibonacci Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../examples/dist-fib/structure.html"><strong aria-hidden="true">3.2.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="../examples/dist-fib/node.html"><strong aria-hidden="true">3.2.2.</strong> Node</a></li><li class="chapter-item expanded "><a href="../examples/dist-fib/cluster.html"><strong aria-hidden="true">3.2.3.</strong> Cluster</a></li><li class="chapter-item expanded "><a href="../examples/dist-fib/cli.html"><strong aria-hidden="true">3.2.4.</strong> Command line</a></li><li class="chapter-item expanded "><a href="../examples/dist-fib/conclusion.html"><strong aria-hidden="true">3.2.5.</strong> Conclusion</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.3.</strong> Croc Replica</div></li><li class="chapter-item expanded "><a href="../examples/final_challenge.html"><strong aria-hidden="true">3.4.</strong> Final Challenge</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../concepts.html"><strong aria-hidden="true">2.</strong> Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../concepts/channels.html"><strong aria-hidden="true">2.1.</strong> Channels</a></li><li class="chapter-item expanded "><a href="../concepts/providers.html"><strong aria-hidden="true">2.2.</strong> Providers</a></li><li class="chapter-item expanded "><a href="../concepts/wire-representation.html" class="active"><strong aria-hidden="true">2.3.</strong> Wire Representation</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -220,10 +220,10 @@ and then they're serialized and sent, so they look like this:</p>
     3 0x0 0x0 0x0 0x0 ()
     4 0x0
 </code></pre>
-<p>Currently due to simplicity, IGCP sends all objects (even wire statically-sized-types) as dynamically sized.
+<p>Currently due to simplicity, Canary sends all objects (even wire statically-sized-types) as dynamically sized.
 This means that there is space for improvement, but it is still sufficiently efficient for most use cases.</p>
 <p>NOTE ABOUT TYPES:
-Sending and receiving non-equivalent wire represented types can lead to messaging problems that can be hard to debug.</p>
+Sending and receiving non-equivalent wire represented types can lead to messaging problems which can be <em>really</em> hard to debug.</p>
 
                     </main>
 
@@ -233,9 +233,6 @@ Sending and receiving non-equivalent wire represented types can lead to messagin
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="../examples.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -247,9 +244,6 @@ Sending and receiving non-equivalent wire represented types can lead to messagin
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="../examples.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

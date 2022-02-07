@@ -1,52 +1,24 @@
 # Providers
 
-Providers are a way of exposing a route (usually the global route)
-for external access.
-
-A simple example of a provider is the insecure TCP provider,
-which provides non-encrypted TCP channels to a route.
-
-Providers offer a simple interface for exposing routes through them.
-An example of a TCP provider in use:
+Providers are the most way to get channels.
+You can bind them and then simply iterate over their Channels.
 
 ```rust , no_run
-
-use canary::prelude::*;
-use std::sync::atomic::AtomicU64;
-use std::sync::atomic::Ordering;
-use std::sync::Arc;
-
-use canary::providers::Tcp;
-
-#[canary::main]
-async fn main() -> Res<()> {
-    // bind the global route to this tcp socket
-    Tcp::bind("127.0.0.1:8080").await?;
-    GLOBAL_ROUTE.add_service::<counter_service>(Arc::new(AtomicU64::new(0)))?;
-    Ok(())
-}
-
-#[service]
-async fn counter_service(mut peer: Channel, counter: Arc<AtomicU64>) -> Res<()> {
-    let current_val = counter.fetch_add(1, Ordering::Relaxed);
-    peer.send(current_val).await?;
-    Ok(())
-}
-
-```
-
-Accessing the counter service should be as easy as:
-```rust , no_run
-use canary::Result;
-use canary::providers::Tcp;
-
-#[main]
-async fn main() -> Result<()> {
-    let mut counter_service_chan = Tcp::connect("127.0.0.1:8080", "counter_service").await?;
-    let current: u64 = counter_service_chan.receive().await?;
-    println!("current value: {}", current);
+let tcp = Tcp::bind("127.0.0.1:8080").await?;
+while let Ok(chan) = tcp.next().await {
+    let mut chan = chan.encrypted().await?; // choose if the channel should be encrypted
+    chan.send("hello!").await?;
 }
 ```
 
+There are also addresses which encapsulate providers.
+```rust , no_run
+let addr = "tcp@127.0.0.1:8080".parse::<Addr>()?;
+let mut chan = addr.connect().await?;
+chan.send("hello!").await?;
+```
 
-
+At the moment, Canary supports the following providers:
+- TCP        (works on non-wasm platforms)
+- Unix       (works on unix platforms)
+- WebSockets (works on all platforms)

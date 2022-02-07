@@ -1,7 +1,6 @@
 
 # Wire Representation
 
-
 If you don't care about efficiency or serialization, skip this section.
 Wire representation is how your protocol looks like on the wire.
 
@@ -93,8 +92,8 @@ A condensed version of this wire representation looks like this:
     4 0x0
 ```
 
-Currently due to simplicity, IGCP sends all objects (even wire statically-sized-types) as dynamically sized.
+Currently due to simplicity, Canary sends all objects (even wire statically-sized-types) as dynamically sized.
 This means that there is space for improvement, but it is still sufficiently efficient for most use cases.
 
 NOTE ABOUT TYPES:
-Sending and receiving non-equivalent wire represented types can lead to messaging problems that can be hard to debug.
+Sending and receiving non-equivalent wire represented types can lead to messaging problems which can be *really* hard to debug.
